@@ -76,6 +76,15 @@ export default function GolfSite() {
     alert('Let it be written!');
   };
 
+  const handleRemovePlayer = (id, nameToRemove) => {
+    const updatedTeeTimes = teeTimes.map(t => {
+      if (t.id !== id) return t;
+      return { ...t, players: t.players.filter(p => p !== nameToRemove) };
+    });
+
+    setTeeTimes(updatedTeeTimes);
+  };
+
   const renderTeeTimeDetail = (id) => {
     const teeTime = teeTimes.find(t => t.id === id);
     if (!teeTime) return null;
@@ -101,7 +110,9 @@ export default function GolfSite() {
           {teeTime.players.length > 0 ? (
             <ul>
               {teeTime.players.map((p, i) => (
-                <li key={i}>{p}</li>
+                <li key={i}>
+                  {p} <button onClick={() => handleRemovePlayer(id, p)} style={{ marginLeft: '10px', color: 'red' }}>Remove</button>
+                </li>
               ))}
             </ul>
           ) : (
@@ -139,7 +150,7 @@ export default function GolfSite() {
       return (
         <div style={{ color: '#2c3e50' }}>
           <h2>Historical Results</h2>
-          <p>Coming soon... 🏌️‍♂️</p>
+          <p> </p>
           <input
             type="file"
             accept="image/*"
