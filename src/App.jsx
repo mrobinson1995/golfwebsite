@@ -43,54 +43,40 @@ if (!isNaN(dateObj.getTime())) {
   };
 
   useEffect(() => {
-    fetchTeeTimes();
+    const localData = localStorage.getItem('teeTimes');
+    if (localData) {
+      setTeeTimes(JSON.parse(localData));
+    } else {
+      fetchTeeTimes();
+    }
   }, []);
 
-  const handleSignUp = async (id) => {
+  const handleSignUp = (id) => {
     if (!playerName.trim()) {
       setError('Please enter your name.');
       return;
     }
 
-    const teeTime = teeTimes.find((t) => t.id === id);
-    if (!teeTime) return;
-
-    if (teeTime.players.includes(playerName)) {
-      setError('You are already signed up.');
-      return;
-    }
-
-    if (teeTime.players.length >= 4) {
-      setError('This tee time is already full.');
-      return;
-    }
-
-    const nextPlayerIndex = teeTime.players.length + 1;
-    const playerField = `Player ${nextPlayerIndex}`;
-
-    const query = `Course=${encodeURIComponent(teeTime.course)}&Date=${encodeURIComponent(teeTime.date)}&Time=${encodeURIComponent(teeTime.time)}`;
-
-    try {
-      const res = await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/search?${query}`);
-      const rows = await res.json();
-
-      if (rows.length > 0) {
-        const rowId = rows[0].id;
-        await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/id/${rowId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ data: { [playerField]: playerName } })
-        });
-        await fetchTeeTimes();
-        setPlayerName('');
-        setError('');
+    const updatedTeeTimes = teeTimes.map((t) => {
+      if (t.id !== id) return t;
+      if (t.players.includes(playerName)) {
+        setError('You are already signed up.');
+        return t;
       }
-    } catch (err) {
-      console.error('Error updating player:', err);
-      setError('Something went wrong.');
-    }
+      if (t.players.length >= 4) {
+        setError('This tee time is already full.');
+        return t;
+      }
+      return {
+        ...t,
+        players: [...t.players, playerName]
+      };
+    });
+
+    setTeeTimes(updatedTeeTimes);
+    setPlayerName('');
+    setError('');
+    localStorage.setItem('teeTimes', JSON.stringify(updatedTeeTimes));
   };
 
   const renderTeeTimeDetail = (id) => {
