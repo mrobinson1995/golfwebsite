@@ -46,7 +46,7 @@ if (!isNaN(dateObj.getTime())) {
     fetchTeeTimes();
   }, []);
 
-  const handleSignUp = async (id) => {
+  const handleSignUp = (id) => {
     if (!playerName.trim()) {
       setError('Please enter your name.');
       return;
