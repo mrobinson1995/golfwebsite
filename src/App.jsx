@@ -15,15 +15,15 @@ export default function GolfSite() {
       const data = await res.json();
       const formattedData = data.map((item, index) => {
         let parsedDate = item['Date']?.trim();
-let formattedDate = parsedDate || 'Invalid Date';
-if (parsedDate) {
-  const dateObj = new Date(parsedDate);
-if (!isNaN(dateObj.getTime())) {
-    formattedDate = dateObj.toLocaleDateString(undefined, {
-      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
-    });
-  }
-}
+        let formattedDate = parsedDate || 'Invalid Date';
+        if (parsedDate) {
+          const dateObj = new Date(parsedDate);
+          if (!isNaN(dateObj.getTime())) {
+            formattedDate = dateObj.toLocaleDateString(undefined, {
+              weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+          }
+        }
         return {
           id: index + 1,
           rowId: item.id,
@@ -74,7 +74,6 @@ if (!isNaN(dateObj.getTime())) {
     setPlayerName('');
     setError('');
     alert('Let it be written!');
-  };
   };
 
   const renderTeeTimeDetail = (id) => {
