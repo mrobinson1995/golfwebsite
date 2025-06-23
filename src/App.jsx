@@ -126,35 +126,28 @@ export default function GolfSite() {
   };
 
   if (tab === 'entrance') {
-    return <div>...entrance code remains unchanged...</div>; // keep entrance screen code here
+    return (
+      <div style={{
+        backgroundImage: 'url(https://golfdigest.sports.sndimg.com/content/dam/images/golfdigest/fullset/2017/10/07/59d9000722bd233920d352c5_Jeffersonville%203.JPG.rend.hgtvcom.966.644.suffix/1573348146565.jpeg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'DM Serif Display, serif',
+        color: 'white',
+        textShadow: '2px 2px 6px rgba(0,0,0,0.8)',
+        padding: '0 20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: '40px', borderRadius: '12px' }}>
+          <h1 style={{ fontSize: 'clamp(28px, 6vw, 48px)', marginBottom: '20px' }}><em>"So it is said, let it be written"</em></h1>
+          <button onClick={() => setTab('teeTimes')} style={{ padding: '14px 28px', fontSize: '18px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Enter Clubhouse</button>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f1efe7', padding: '40px 20px', height: '100vh', width: '100vw', boxSizing: 'border-box', overflowX: 'hidden' }}>
-      <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        ...header and nav remain unchanged...
-
-        {tab === 'teeTimes' && (
-          <div style={{ marginTop: '40px' }}>
-            <h2 style={{ fontSize: '24px', marginBottom: '20px' }}>Tee Time Calendar</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              {teeTimes.map(({ id, date, time, course, players }) => (
-                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ flex: '1 1 250px', backgroundColor: '#f8f8f8', border: '1px solid #ccc', borderRadius: '6px', padding: '10px 14px', cursor: 'pointer' }}>
-                  <strong>{new Date(date.replace(/\s+/g, '')).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</strong>
-                  <p style={{ margin: '6px 0' }}>{time}</p>
-                  <p style={{ margin: '0', fontStyle: 'italic' }}>{course}</p>
-                  <p style={{ marginTop: '10px', fontWeight: 600 }}>{players.length} / 4 Players</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab.startsWith('teeTime-') && renderTeeTimeDetail(parseInt(tab.split('-')[1]))}
-
-        ...majors and rules tab remain unchanged...
-      </div>
-    </div>
-  );
+  return null; // rendering handled in entrance or other tabs
 }
