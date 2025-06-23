@@ -15,12 +15,10 @@ export default function GolfSite() {
       const data = await res.json();
       const formattedData = data.map((item, index) => {
         let parsedDate = item['Date ']?.trim();
-let formattedDate = 'Invalid Date';
+let formattedDate = parsedDate || 'Invalid Date';
 if (parsedDate) {
-  const [month, day, year] = parsedDate.split('/');
-  const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  const dateObj = new Date(isoDate);
-  if (!isNaN(dateObj.getTime())) {
+  const dateObj = new Date(parsedDate);
+if (!isNaN(dateObj.getTime())) {
     formattedDate = dateObj.toLocaleDateString(undefined, {
       weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
     });
@@ -70,7 +68,7 @@ if (parsedDate) {
     const nextPlayerIndex = teeTime.players.length + 1;
     const playerField = `Player ${nextPlayerIndex}`;
 
-    const query = `Course=${encodeURIComponent(teeTime.course)}&Date%20=${encodeURIComponent(teeTime.date)}&Time=${encodeURIComponent(teeTime.time)}`;
+    const query = `Course=${encodeURIComponent(teeTime.course)}&Date=${encodeURIComponent(teeTime.date)}&Time=${encodeURIComponent(teeTime.time)}`;
 
     try {
       const res = await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/search?${query}`);
