@@ -149,5 +149,21 @@ export default function GolfSite() {
     );
   }
 
-  return null; // rendering handled in entrance or other tabs
+  if (tab.startsWith('teeTime-')) {
+    const id = parseInt(tab.split('-')[1]);
+    return renderTeeTimeDetail(id);
+  }
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Tee Times</h1>
+      {teeTimes.map(({ id, date, time, course, players }) => (
+        <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', cursor: 'pointer' }}>
+          <strong>{new Date(date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</strong>
+          <p>{time} — {course}</p>
+          <p>{players.length} / 4 Players</p>
+        </div>
+      ))}
+    </div>
+  );
 }
