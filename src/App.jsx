@@ -172,7 +172,7 @@ export default function GolfSite() {
     if (tab === 'rules') {
       return (
         <div style={{ color: '#2c3e50', fontFamily: 'Georgia, serif', lineHeight: '1.6' }}>
-          <h2>Official Rules & Regulations of the Weekend League – Quick Hitters Golf Association</h2>
+          <h2>Official Rules & Regulations – Quick Hitters Golf Association</h2>
           <ol>
             <li>
               <strong>Rule Governance and Interpretation</strong><br />
