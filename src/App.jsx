@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ref, get, set } from 'firebase/database';
-import { db } from './firebase';
+import { ref, get, set, onValue } from "firebase/database";
+import { db } from "./firebase";
 
 export default function GolfSite() {
   const [teeTimes, setTeeTimes] = useState([]);
@@ -8,46 +8,55 @@ export default function GolfSite() {
   const [error, setError] = useState('');
   const [tab, setTab] = useState('entrance');
   const [scorecardImages, setScorecardImages] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchTeeTimes = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
-        const data = await res.json();
-        const formattedData = data.map((item, index) => {
-          let parsedDate = item['Date']?.trim();
-          let formattedDate = parsedDate || 'Invalid Date';
-          if (parsedDate) {
-            const dateObj = new Date(parsedDate + 'T00:00:00');
-            if (!isNaN(dateObj.getTime())) {
-              formattedDate = dateObj.toLocaleDateString(undefined, {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              });
-            }
+  const fetchTeeTimes = async () => {
+    try {
+      const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
+      const data = await res.json();
+
+      const formattedData = data.map((item, index) => {
+        let parsedDate = item['Date']?.trim();
+        let formattedDate = parsedDate || 'Invalid Date';
+        if (parsedDate) {
+          const dateObj = new Date(parsedDate + 'T00:00:00');
+          if (!isNaN(dateObj.getTime())) {
+            formattedDate = dateObj.toLocaleDateString(undefined, {
+              weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
           }
+        }
+        return {
+          id: index + 1,
+          rowId: item.id,
+          date: parsedDate || '',
+          formattedDate,
+          time: item.Time,
+          course: item.Course,
+          players: [],
+        };
+      });
+
+      // Merge with Firebase player data
+      const teeTimeRefs = ref(db, 'teeTimes');
+      onValue(teeTimeRefs, (snapshot) => {
+        const playerData = snapshot.val() || {};
+        const merged = formattedData.map(t => {
           return {
-            id: index + 1,
-            rowId: item.id,
-            date: parsedDate || '',
-            formattedDate,
-            time: item.Time,
-            course: item.Course,
-            players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
+            ...t,
+            players: playerData[t.id] || [],
           };
         });
-        setTeeTimes(formattedData);
-      } catch (error) {
-        console.error('Failed to fetch tee times:', error);
-      } finally {
+        setTeeTimes(merged);
         setLoading(false);
-      }
-    };
+      });
+    } catch (error) {
+      console.error('Failed to fetch tee times:', error);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTeeTimes();
   }, []);
 
@@ -71,23 +80,19 @@ export default function GolfSite() {
     }
 
     const updatedPlayers = [...teeTime.players, playerName];
-    const updatedTeeTimes = teeTimes.map(t =>
-      t.id === id ? { ...t, players: updatedPlayers } : t
-    );
+    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
 
-    setTeeTimes(updatedTeeTimes);
-    setPlayerName('');
     setError('');
+    setPlayerName('');
     alert('Let it be written!');
   };
 
-  const handleRemovePlayer = (id, nameToRemove) => {
-    const updatedTeeTimes = teeTimes.map(t => {
-      if (t.id !== id) return t;
-      return { ...t, players: t.players.filter(p => p !== nameToRemove) };
-    });
+  const handleRemovePlayer = async (id, nameToRemove) => {
+    const teeTime = teeTimes.find(t => t.id === id);
+    if (!teeTime) return;
 
-    setTeeTimes(updatedTeeTimes);
+    const updatedPlayers = teeTime.players.filter(p => p !== nameToRemove);
+    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
   };
 
   const renderTeeTimeDetail = (id) => {
@@ -209,7 +214,7 @@ export default function GolfSite() {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#eef2f5', minHeight: '100vh' }}>
       <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button onClick={() => setTab('teeTimes')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'teeTimes' ? '#3e513d' : 'white', color: tab === 'teeTimes' ? 'white' : '#3e513d' }}>Tee Times</button>
-        <button onClick={() => setTab('historical')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'historical' ? '#3e513d' : 'white', color: tab === 'historical' ? 'white' : '#3e513d' }}>Major Results</button>
+        <button onClick={() => setTab('majors')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'majors' ? '#3e513d' : 'white', color: tab === 'majors' ? 'white' : '#3e513d' }}>Major Results</button>
         <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Official Rules</button>
       </nav>
       {renderTabs()}
