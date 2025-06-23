@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ref, get, set } from "firebase/database";
-import { db } from "./firebase";
+import { ref, get, set } from 'firebase/database';
+import { db } from './firebase';
 
 export default function GolfSite() {
   const [teeTimes, setTeeTimes] = useState([]);
@@ -23,7 +23,10 @@ export default function GolfSite() {
             const dateObj = new Date(parsedDate + 'T00:00:00');
             if (!isNaN(dateObj.getTime())) {
               formattedDate = dateObj.toLocaleDateString(undefined, {
-                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
               });
             }
           }
@@ -206,7 +209,7 @@ export default function GolfSite() {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#eef2f5', minHeight: '100vh' }}>
       <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button onClick={() => setTab('teeTimes')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'teeTimes' ? '#3e513d' : 'white', color: tab === 'teeTimes' ? 'white' : '#3e513d' }}>Tee Times</button>
-        <button onClick={() => setTab('majors')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'majors' ? '#3e513d' : 'white', color: tab === 'majors' ? 'white' : '#3e513d' }}>Major Results</button>
+        <button onClick={() => setTab('historical')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'historical' ? '#3e513d' : 'white', color: tab === 'historical' ? 'white' : '#3e513d' }}>Major Results</button>
         <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Official Rules</button>
       </nav>
       {renderTabs()}
