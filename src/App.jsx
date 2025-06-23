@@ -9,26 +9,39 @@ export default function GolfSite() {
   const [tab, setTab] = useState('entrance');
   const [scorecardImages, setScorecardImages] = useState([]);
 
-  useEffect(() => {
-    const fetchTeeTimes = async () => {
-      try {
-        const snapshot = await get(ref(db, 'teeTimes'));
-        const data = snapshot.exists() ? snapshot.val() : [];
-
-        const signupsSnapshot = await get(ref(db, 'signups'));
-        const signups = signupsSnapshot.exists() ? signupsSnapshot.val() : {};
-
-        const formatted = data.map((t, i) => ({
-          ...t,
-          id: i + 1,
-          players: signups[i + 1] || []
-        }));
-
-        setTeeTimes(formatted);
-      } catch (err) {
-        console.error('Error fetching from Firebase:', err);
-      }
-    };
+  const fetchTeeTimes = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
+      const data = await res.json();
+      const formattedData = data.map((item, index) => {
+        let parsedDate = item['Date']?.trim();
+        let formattedDate = parsedDate || 'Invalid Date';
+        if (parsedDate) {
+          const dateObj = new Date(parsedDate + 'T00:00:00');
+          if (!isNaN(dateObj.getTime())) {
+            formattedDate = dateObj.toLocaleDateString(undefined, {
+              weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+          }
+        }
+        return {
+          id: index + 1,
+          rowId: item.id,
+          date: parsedDate || '',
+          formattedDate,
+          time: item.Time,
+          course: item.Course,
+          players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
+        };
+      });
+      setTeeTimes(formattedData);
+    } catch (error) {
+      console.error('Failed to fetch tee times:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchTeeTimes();
   }, []);
@@ -61,30 +74,106 @@ export default function GolfSite() {
     setPlayerName('');
     setError('');
     alert('Let it be written!');
+  };
 
-    try {
-      await set(ref(db, `signups/${id}`), updatedPlayers);
-    } catch (err) {
-      console.error('Error saving to Firebase:', err);
-    }
+  const handleRemovePlayer = (id, nameToRemove) => {
+    const updatedTeeTimes = teeTimes.map(t => {
+      if (t.id !== id) return t;
+      return { ...t, players: t.players.filter(p => p !== nameToRemove) };
+    });
+
+    setTeeTimes(updatedTeeTimes);
   };
 
   const handleRemove = async (id, nameToRemove) => {
     const teeTime = teeTimes.find(t => t.id === id);
-    if (!teeTime) return;
+    if (!teeTime) return null;
 
-    const updatedPlayers = teeTime.players.filter(name => name !== nameToRemove);
-    const updatedTeeTimes = teeTimes.map(t =>
-      t.id === id ? { ...t, players: updatedPlayers } : t
+    return (
+      <div style={{ marginTop: '40px', fontFamily: 'Arial, sans-serif', color: '#333' }}>
+        <button onClick={() => setTab('teeTimes')} style={{ marginBottom: '20px', padding: '10px 20px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '6px' }}>← Back</button>
+        <h2>{teeTime.course}</h2>
+        <p><strong>Date:</strong> {teeTime.formattedDate}</p>
+        <p><strong>Time:</strong> {teeTime.time}</p>
+
+        <input
+          placeholder="Enter your name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+          style={{ padding: '10px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+        <button onClick={() => handleSignUp(id)} style={{ padding: '10px 20px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '6px' }}>Playing</button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+
+        <div>
+          <h3>Participants:</h3>
+          {teeTime.players.length > 0 ? (
+            <ul>
+              {teeTime.players.map((p, i) => (
+                <li key={i}>
+                  {p} <button onClick={() => handleRemovePlayer(id, p)} style={{ marginLeft: '10px', color: 'red' }}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No one signed up yet.</p>
+          )}
+        </div>
+      </div>
     );
+  };
 
-    setTeeTimes(updatedTeeTimes);
-
-    try {
-      await set(ref(db, `signups/${id}`), updatedPlayers);
-    } catch (err) {
-      console.error('Error removing from Firebase:', err);
+  const renderTabs = () => {
+    if (tab === 'teeTimes') {
+      return (
+        <div>
+          <h1 style={{ fontFamily: 'Georgia, serif', color: '#2c3e50' }}>Tee Times</h1>
+          {loading ? <p>Loading tee times...</p> : (
+            teeTimes.length > 0 ? (
+              teeTimes.map(({ id, formattedDate, time, course, players }) => (
+                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
+                  <strong style={{ fontSize: '16px' }}>{formattedDate}</strong>
+                  <p style={{ margin: '5px 0' }}>{time} — {course}</p>
+                  <p>{players.length} / 4 Players</p>
+                </div>
+              ))
+            ) : <p>No tee times scheduled.</p>
+          )}
+        </div>
+      );
     }
+    if (tab.startsWith('teeTime-')) {
+      const id = parseInt(tab.split('-')[1]);
+      return renderTeeTimeDetail(id);
+    }
+    if (tab === 'historical') {
+      return (
+        <div style={{ color: '#2c3e50' }}>
+          <h2>Historical Results</h2>
+          <p>Coming soon... 🏌️‍♂️</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setScorecardImages([...scorecardImages, ...Array.from(e.target.files)])}
+            style={{ marginTop: '10px' }}
+          />
+        </div>
+      );
+    }
+    if (tab === 'rules') {
+      return (
+        <div style={{ color: '#2c3e50' }}>
+          <h2>Rules</h2>
+          <ul>
+            <li>Each tee time can have a max of 4 players.</li>
+            <li>Only sign up if you're committed to playing.</li>
+            <li>If you withdraw, notify the group 24 hours in advance.</li>
+            <li>Injured withdrawals from a major forfeit the mug.</li>
+          </ul>
+        </div>
+      );
+    }
+    return null;
   };
 
   if (tab === 'entrance') {
@@ -118,85 +207,7 @@ export default function GolfSite() {
         <button onClick={() => setTab('majors')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'majors' ? '#3e513d' : 'white', color: tab === 'majors' ? 'white' : '#3e513d' }}>Major Results</button>
         <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Official Rules</button>
       </nav>
-
-      {tab === 'teeTimes' && (
-        <div>
-          <h1 style={{ fontFamily: 'Georgia, serif', color: '#2c3e50' }}>Tee Times</h1>
-          {teeTimes.length > 0 ? (
-            teeTimes.map(({ id, date, time, course, players }) => (
-              <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-                <strong style={{ fontSize: '16px' }}>{new Date(date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</strong>
-                <p>{time} — {course}</p>
-                <p>{players.length} / 4 Players</p>
-              </div>
-            ))
-          ) : <p>No tee times scheduled.</p>}
-        </div>
-      )}
-
-      {tab.startsWith('teeTime-') && (() => {
-        const id = parseInt(tab.split('-')[1]);
-        const teeTime = teeTimes.find(t => t.id === id);
-        if (!teeTime) return null;
-        return (
-          <div style={{ marginTop: '40px' }}>
-            <button onClick={() => setTab('teeTimes')} style={{ marginBottom: '20px', padding: '8px 16px', background: '#ccc', border: 'none', borderRadius: '6px' }}>← Back</button>
-            <h2>{teeTime.course}</h2>
-            <p><strong>Date:</strong> {teeTime.date}</p>
-            <p><strong>Time:</strong> {teeTime.time}</p>
-
-            <input
-              placeholder="Enter your name"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              style={{ padding: '10px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-            />
-            <button onClick={() => handleSignUp(id)} style={{ padding: '10px 20px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '6px' }}>Playing</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-
-            <div style={{ marginTop: '20px' }}>
-              <h3>Participants:</h3>
-              {teeTime.players.length > 0 ? (
-                <ul>
-                  {teeTime.players.map((p, i) => (
-                    <li key={i}>
-                      {p} <button onClick={() => handleRemove(id, p)} style={{ marginLeft: '10px', color: 'red', cursor: 'pointer' }}>Remove</button>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p>No one signed up yet.</p>}
-            </div>
-          </div>
-        );
-      })()}
-
-      {tab === 'majors' && (
-        <section style={{ marginTop: '40px' }}>
-          <h2>Major Results</h2>
-          <input type="file" multiple accept="image/*" onChange={(e) => setScorecardImages([...scorecardImages, ...Array.from(e.target.files)])} />
-          <div style={{ marginTop: '20px' }}>
-            {scorecardImages.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {scorecardImages.map((url, index) => (
-                  <img key={index} src={URL.createObjectURL(url)} alt="Result" style={{ width: '100%', maxWidth: '200px' }} />
-                ))}
-              </div>
-            ) : <p>No major results yet.</p>}
-          </div>
-        </section>
-      )}
-
-      {tab === 'rules' && (
-        <div style={{ marginTop: '40px' }}>
-          <h2>Official Rules</h2>
-          <ul>
-            <li>Each tee time can have a max of 4 players.</li>
-            <li>Only sign up if you're committed to playing.</li>
-            <li>If you withdraw, notify the group 24 hours in advance.</li>
-            <li>Injured withdrawals from a major forfeit the mug.</li>
-          </ul>
-        </div>
-      )}
+      {renderTabs()}
     </div>
   );
 }
