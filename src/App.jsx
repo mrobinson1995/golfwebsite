@@ -170,54 +170,64 @@ export default function GolfSite() {
         </div>
       );
     }
-  if (tab === 'rules') {
+if (tab === 'rules') {
   return (
-    <div style={{ color: '#2c3e50', fontFamily: 'Georgia, serif', lineHeight: '1.6', paddingBottom: '40px' }}>
-      <h2 style={{ fontSize: '28px', marginBottom: '20px', textDecoration: 'underline' }}>
-        Official Rules & Regulations – Quick Hitters Golf Association
-      </h2>
-      <ol style={{ paddingLeft: '20px' }}>
-        <li><strong>Rule Governance and Interpretation</strong><br />All play shall be governed by the current edition of the Rules of Golf as approved by the USGA, except where modified by the following Local Rules and League Policies.</li>
-        <li><strong>Local Rule – Lateral Hazards (Red Stakes)</strong><br />
-          All penalty areas shall be treated as lateral water hazards (red stakes), regardless of actual course markings.
-          <ul>
-            <li>A ball entering a penalty area must be dropped within two club lengths from the point where the ball last crossed the margin of the hazard.</li>
-            <li>The ball must not be dropped nearer the hole.</li>
-            <li>Penalty: One stroke.</li>
-          </ul>
-        </li>
-        <li><strong>“Weekend Rules” Clause</strong><br />“Weekend Rules” are in effect, providing players with a relaxed but structured environment. Players are expected to maintain integrity, pace of play, and respect for the game while adhering to the following league-specific adaptations.</li>
-        <li><strong>Gimme Protocol</strong>
-          <ul>
-            <li>Gimmes may only be granted by an opponent.</li>
-            <li>Teammates may not issue or accept gimmes on one another’s behalf.</li>
-            <li>All gimmes are to be within reason (typically within 18 inches) and must be explicitly given verbally or by gesture.</li>
-            <li>No implied gimmes are allowed.</li>
-          </ul>
-        </li>
-        <li><strong>Mug Drinking Privileges</strong>
-          <ul>
-            <li>The ceremonial mugs shall be transferred at the conclusion of each round to the designated winner(s).</li>
-            <li>Injury withdrawals or other forfeitures result in immediate forfeiture of Mug privileges for that round.</li>
-            <li>The Mug cannot be retained through default or absence.</li>
-          </ul>
-        </li>
-        <li><strong>Withdrawals</strong>
-          <ul>
-            <li>Any player who withdraws during a round, regardless of reason, forfeits all active standings and privileges, including but not limited to the Mug and match outcomes.</li>
-            <li>Partial rounds do not qualify for scoring purposes.</li>
-          </ul>
-        </li>
-        <li><strong>Rule Changes and Amendments</strong>
-          <ul>
-            <li>Any proposed rule changes must be brought forward during an official committee meeting.</li>
-            <li>A quorum (defined as at least 50% of active committee members) must be present.</li>
-            <li>Each committee member holds one vote.</li>
-            <li>In the event of a tie, the decision shall be resolved via a coin flip, executed by a neutral party or non-competing committee member.</li>
-          </ul>
-        </li>
-      </ol>
-    </div>
+  <div style={{ color: '#2c3e50', fontFamily: "'Playfair Display', serif", padding: '20px' }}>
+  <h2 style={{ fontSize: '28px', marginBottom: '20px' }}>Official Rules & Regulations – Quick Hitters Golf Association</h2>
+  <ol style={{ lineHeight: '1.8' }}>
+    <li>
+      <strong>Rule Governance and Interpretation</strong><br />
+      All play shall be governed by the current edition of the Rules of Golf as approved by the USGA, except where modified by the following Local Rules and League Policies.
+    </li>
+    <li>
+      <strong>Local Rule – Lateral Hazards (Red Stakes)</strong><br />
+      All penalty areas shall be treated as lateral water hazards (red stakes), regardless of actual course markings.
+      <ul>
+        <li>A ball entering a penalty area must be dropped within two club lengths from the point where the ball last crossed the margin of the hazard.</li>
+        <li>The ball must not be dropped nearer the hole.</li>
+        <li>Penalty: One stroke.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>“Weekend Rules” Clause</strong><br />
+      “Weekend Rules” are in effect, providing players with a relaxed but structured environment. Players are expected to maintain integrity, pace of play, and respect for the game while adhering to the following league-specific adaptations.
+    </li>
+    <li>
+      <strong>Gimme Protocol</strong>
+      <ul>
+        <li>Gimmes may only be granted by an opponent.</li>
+        <li>Teammates may not issue or accept gimmes on one another’s behalf.</li>
+        <li>All gimmes are to be within reason (typically within 18 inches) and must be explicitly given verbally or by gesture.</li>
+        <li>No implied gimmes are allowed.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Mug Drinking Privileges</strong>
+      <ul>
+        <li>The ceremonial mugs shall be transferred at the conclusion of each round to the designated winner(s).</li>
+        <li>Injury withdrawals or other forfeitures result in immediate forfeiture of Mug privileges for that round.</li>
+        <li>The Mug cannot be retained through default or absence.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Withdrawals</strong>
+      <ul>
+        <li>Any player who withdraws during a round, regardless of reason, forfeits all active standings and privileges, including but not limited to the Mug and match outcomes.</li>
+        <li>Partial rounds do not qualify for scoring purposes.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Rule Changes and Amendments</strong>
+      <ul>
+        <li>Any proposed rule changes must be brought forward during an official committee meeting.</li>
+        <li>A quorum (defined as at least 50% of active committee members) must be present.</li>
+        <li>Each committee member holds one vote.</li>
+        <li>In the event of a tie, the decision shall be resolved via a coin flip, executed by a neutral party or non-competing committee member.</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
   );
 }
 
