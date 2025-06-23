@@ -13,14 +13,26 @@ export default function GolfSite() {
       setLoading(true);
       const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
       const data = await res.json();
-      const formattedData = data.map((item, index) => ({
-        id: index + 1,
-        rowId: item.id,
-        date: item['Date ']?.trim() || '',
-        time: item.Time,
-        course: item.Course,
-        players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
-      }));
+      const formattedData = data.map((item, index) => {
+        let parsedDate = item['Date ']?.trim();
+        let formattedDate = parsedDate;
+        try {
+          formattedDate = new Date(parsedDate).toLocaleDateString(undefined, {
+            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+          });
+        } catch {
+          formattedDate = 'Invalid Date';
+        }
+        return {
+          id: index + 1,
+          rowId: item.id,
+          date: parsedDate || '',
+          formattedDate,
+          time: item.Time,
+          course: item.Course,
+          players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
+        };
+      });
       setTeeTimes(formattedData);
     } catch (error) {
       console.error('Failed to fetch tee times:', error);
@@ -88,7 +100,7 @@ export default function GolfSite() {
       <div style={{ marginTop: '40px' }}>
         <button onClick={() => setTab('teeTimes')} style={{ marginBottom: '20px' }}>← Back</button>
         <h2>{teeTime.course}</h2>
-        <p><strong>Date:</strong> {teeTime.date}</p>
+        <p><strong>Date:</strong> {teeTime.formattedDate}</p>
         <p><strong>Time:</strong> {teeTime.time}</p>
 
         <input
@@ -122,9 +134,9 @@ export default function GolfSite() {
           <h1>Tee Times</h1>
           {loading ? <p>Loading tee times...</p> : (
             teeTimes.length > 0 ? (
-              teeTimes.map(({ id, date, time, course, players }) => (
+              teeTimes.map(({ id, formattedDate, time, course, players }) => (
                 <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', cursor: 'pointer' }}>
-                  <strong>{new Date(date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</strong>
+                  <strong>{formattedDate}</strong>
                   <p>{time} — {course}</p>
                   <p>{players.length} / 4 Players</p>
                 </div>
