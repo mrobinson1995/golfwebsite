@@ -15,12 +15,17 @@ export default function GolfSite() {
       const data = await res.json();
       const formattedData = data.map((item, index) => {
         let parsedDate = item['Date ']?.trim();
-        let formattedDate = 'Invalid Date';
-        if (parsedDate && !isNaN(Date.parse(parsedDate))) {
-          formattedDate = new Date(parsedDate).toLocaleDateString(undefined, {
-            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
-          });
-        }
+let formattedDate = 'Invalid Date';
+if (parsedDate) {
+  const [month, day, year] = parsedDate.split('/');
+  const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  const dateObj = new Date(isoDate);
+  if (!isNaN(dateObj.getTime())) {
+    formattedDate = dateObj.toLocaleDateString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+    });
+  }
+}
         return {
           id: index + 1,
           rowId: item.id,
@@ -150,11 +155,22 @@ export default function GolfSite() {
       return renderTeeTimeDetail(id);
     }
     if (tab === 'historical') {
-      return <div><h2>Historical Results</h2><p>Coming soon... 🏌️‍♂️</p></div>;
+      return (
+        <div style={{ color: '#2c3e50' }}>
+          <h2>Historical Results</h2>
+          <p>Coming soon... 🏌️‍♂️</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setScorecardImages([...scorecardImages, ...Array.from(e.target.files)])}
+            style={{ marginTop: '10px' }}
+          />
+        </div>
+      );
     }
     if (tab === 'rules') {
       return (
-        <div>
+        <div style={{ color: '#2c3e50' }}>
           <h2>Rules</h2>
           <ul>
             <li>Each tee time can have a max of 4 players.</li>
