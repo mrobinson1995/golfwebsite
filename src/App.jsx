@@ -17,7 +17,7 @@ export default function GolfSite() {
         let parsedDate = item['Date']?.trim();
         let formattedDate = parsedDate || 'Invalid Date';
         if (parsedDate) {
-          const dateObj = new Date(parsedDate);
+          const dateObj = new Date(parsedDate + 'T00:00:00');
           if (!isNaN(dateObj.getTime())) {
             formattedDate = dateObj.toLocaleDateString(undefined, {
               weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
@@ -150,7 +150,7 @@ export default function GolfSite() {
       return (
         <div style={{ color: '#2c3e50' }}>
           <h2>Historical Results</h2>
-          <p> </p>
+          <p>Coming soon... 🏌️‍♂️</p>
           <input
             type="file"
             accept="image/*"
