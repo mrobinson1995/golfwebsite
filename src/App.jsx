@@ -134,9 +134,9 @@ export default function GolfSite() {
           {loading ? <p>Loading tee times...</p> : (
             teeTimes.length > 0 ? (
               teeTimes.map(({ id, formattedDate, time, course, players }) => (
-                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#f9f9f9', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-                  <strong>{formattedDate}</strong>
-                  <p>{time} — {course}</p>
+                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
+                  <strong style={{ fontSize: '16px' }}>{formattedDate}</strong>
+                  <p style={{ margin: '5px 0' }}>{time} — {course}</p>
                   <p>{players.length} / 4 Players</p>
                 </div>
               ))
@@ -194,7 +194,7 @@ export default function GolfSite() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#eef2f5', minHeight: '100vh' }}>
-      <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+      <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button onClick={() => setTab('teeTimes')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'teeTimes' ? '#3e513d' : 'white', color: tab === 'teeTimes' ? 'white' : '#3e513d' }}>Tee Times</button>
         <button onClick={() => setTab('historical')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'historical' ? '#3e513d' : 'white', color: tab === 'historical' ? 'white' : '#3e513d' }}>Historical Results</button>
         <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Rules</button>
