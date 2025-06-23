@@ -75,10 +75,7 @@ if (!isNaN(dateObj.getTime())) {
     setPlayerName('');
     setError('');
     alert('Let it be written!');
-  } catch (err) {
-      console.error('Error updating player:', err);
-      setError('Something went wrong.');
-    }
+  };
   };
 
   const renderTeeTimeDetail = (id) => {
