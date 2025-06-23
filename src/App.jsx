@@ -52,7 +52,7 @@ if (!isNaN(dateObj.getTime())) {
       return;
     }
 
-    const teeTime = teeTimes.find((t) => t.id === id);
+    const teeTime = teeTimes.find(t => t.id === id);
     if (!teeTime) return;
 
     if (teeTime.players.includes(playerName)) {
@@ -65,31 +65,17 @@ if (!isNaN(dateObj.getTime())) {
       return;
     }
 
-    const nextPlayerIndex = teeTime.players.length + 1;
-    const playerField = `Player ${nextPlayerIndex}`;
-    const query = `Course=${encodeURIComponent(teeTime.course.trim())}&Date=${encodeURIComponent(teeTime.date.trim())}&Time=${encodeURIComponent(teeTime.time.trim())}`;
+    // Store participation on a remote server (optional Firebase, etc.) or simply local mutation
+    const updatedTeeTimes = teeTimes.map(t => {
+      if (t.id !== id) return t;
+      return { ...t, players: [...t.players, playerName] };
+    });
 
-    try {
-      const res = await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/search?${query}`);
-      const rows = await res.json();
-
-      if (rows.length > 0) {
-        const rowId = rows[0].id;
-        await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/id/${rowId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ data: { [playerField]: playerName } })
-        });
-        fetchTeeTimes();
-        setPlayerName('');
-        setError('');
-        alert('Let it be written!');
-      } else {
-        setError('Tee time not found in database.');
-      }
-    } catch (err) {
+    setTeeTimes(updatedTeeTimes);
+    setPlayerName('');
+    setError('');
+    alert('Let it be written!');
+  } catch (err) {
       console.error('Error updating player:', err);
       setError('Something went wrong.');
     }
