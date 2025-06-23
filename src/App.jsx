@@ -169,6 +169,67 @@ export default function GolfSite() {
         </div>
       );
     }
+    if (tab === 'rules') {
+      return (
+        <div style={{ color: '#2c3e50', fontFamily: 'Georgia, serif', lineHeight: '1.6' }}>
+          <h2>Official Rules & Regulations of the Weekend League – Quick Hitters Golf Association</h2>
+          <ol>
+            <li>
+              <strong>Rule Governance and Interpretation</strong><br />
+              All play shall be governed by the current edition of the Rules of Golf as approved by the USGA, except where modified by the following Local Rules and League Policies.
+            </li>
+            <li>
+              <strong>Local Rule – Lateral Hazards (Red Stakes)</strong><br />
+              All penalty areas shall be treated as lateral water hazards (red stakes), regardless of actual course markings.<br />
+              <br />
+              A ball entering a penalty area must be dropped within two club lengths from the point where the ball last crossed the margin of the hazard.<br />
+              <br />
+              The ball must not be dropped nearer the hole.<br />
+              <br />
+              Penalty: One stroke.
+            </li>
+            <li>
+              <strong>“Weekend Rules” Clause</strong><br />
+              “Weekend Rules” are in effect, providing players with a relaxed but structured environment. Players are expected to maintain integrity, pace of play, and respect for the game while adhering to the following league-specific adaptations.
+            </li>
+            <li>
+              <strong>Gimme Protocol</strong><br />
+              Gimmes may only be granted by an opponent.<br />
+              <br />
+              Teammates may not issue or accept gimmes on one another’s behalf.<br />
+              <br />
+              All gimmes are to be within reason (typically within 18 inches) and must be explicitly given verbally or by gesture.<br />
+              <br />
+              No implied gimmes are allowed.
+            </li>
+            <li>
+              <strong>Mug Drinking Privileges</strong><br />
+              The ceremonial Mug shall be transferred at the conclusion of each round to the designated winner(s).<br />
+              <br />
+              Injury withdrawals or other forfeitures result in immediate forfeiture of Mug privileges for that round.<br />
+              <br />
+              The Mug cannot be retained through default or absence.
+            </li>
+            <li>
+              <strong>Withdrawals</strong><br />
+              Any player who withdraws during a round, regardless of reason, forfeits all active standings and privileges, including but not limited to the Mug and match outcomes.<br />
+              <br />
+              Partial rounds do not qualify for scoring purposes.
+            </li>
+            <li>
+              <strong>Rule Changes and Amendments</strong><br />
+              Any proposed rule changes must be brought forward during an official committee meeting.<br />
+              <br />
+              A quorum (defined as at least 50% of active committee members) must be present.<br />
+              <br />
+              Each committee member holds one vote.<br />
+              <br />
+              In the event of a tie, the decision shall be resolved via a coin flip, executed by a neutral party or non-competing committee member.
+            </li>
+          </ol>
+        </div>
+      );
+    }
     return null;
   };
 
