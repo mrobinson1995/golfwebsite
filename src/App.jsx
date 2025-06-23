@@ -155,17 +155,48 @@ export default function GolfSite() {
       const id = parseInt(tab.split('-')[1]);
       return renderTeeTimeDetail(id);
     }
-    if (tab === 'historical') {
+     if (tab === 'historical') {
       return (
-        <div style={{ color: '#2c3e50' }}>
-          <h2>Historical Results</h2>
-          <p>Coming soon... 🏌️‍♂️</p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setScorecardImages([...scorecardImages, ...Array.from(e.target.files)])}
-            style={{ marginTop: '10px' }}
-          />
+        <div style={{ color: '#2c3e50', fontFamily: 'Arial, sans-serif' }}>
+          <h2 style={{ marginBottom: '20px' }}>Historical Results</h2>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#3e513d', color: 'white' }}>
+                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date</th>
+                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Course</th>
+                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Winner</th>
+                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Score</th>
+                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Loser</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["6/15/2025", "Broad Run Golfers Club", "Mick + BOD Sr.", "7 & 6", "Mark + BOD Jr."],
+                  ["5/26/2025", "Stone Harbor Golf Club", "BOD Sr. + Mark", "6 & 5", "Mick + BOD Jr."],
+                  ["5/24/2025", "Stone Harbor Golf Club", "BOD Sr. + Mark", "3 & 2", "Mick + BOD Jr."],
+                  ["10/26/2024", "Jeffersonville Golf Club", "BOD Jr. + Mick", "5 & 4", "BOD Sr. + Mark"],
+                  ["10/6/2024", "The Golf Course at Glen Mills", "BOD Jr. + Mick", "3 & 2", "BOD Sr. + Mark"],
+                  ["8/31/2024", "Stone Harbor Golf Club", "BOD Sr. + Mark", "4 & 3", "BOD Jr. + Mick"],
+                  ["7/20/2024", "Stone Harbor Golf Club", "BOD Jr. + BOD Sr.", "1 UP", "Mark + Mick"],
+                  ["7/7/2024", "Stone Harbor Golf Club", "BOD Jr. + BOD Sr.", "2 & 1", "Mark + Mick"],
+                  ["7/4/2024", "Stone Harbor Golf Club", "Mark + Mick", "1 UP", "BOD Jr. + BOD Sr."],
+                  ["6/16/2024", "Stone Harbor Golf Club", "BOD Sr. + Mick", "4 & 3", "BOD Jr. + Mark"],
+                  ["6/15/2024", "Shore Gate Golf Club", "BOD Sr. + Mick", "6 & 5", "BOD Jr. + Mark"],
+                  ["5/26/2024", "Stone Harbor Golf Club", "BOD Sr. + Mick", "4 & 3", "BOD Jr. + Mark"],
+                  ["5/24/2024", "Stone Harbor Golf Club", "BOD Sr. + Mick", "2 & 1", "BOD Jr. + Mark"]
+                ].map(([date, course, winner, score, loser], idx) => (
+                  <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#f9f9f9' : 'white' }}>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{date}</td>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{course}</td>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{winner}</td>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{score}</td>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{loser}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       );
     }
