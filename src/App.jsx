@@ -14,7 +14,7 @@ export default function GolfSite() {
       const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
       const data = await res.json();
       const formattedData = data.map((item, index) => {
-        let parsedDate = item['Date ']?.trim();
+        let parsedDate = item['Date']?.trim();
 let formattedDate = parsedDate || 'Invalid Date';
 if (parsedDate) {
   const dateObj = new Date(parsedDate);
@@ -67,7 +67,7 @@ if (!isNaN(dateObj.getTime())) {
 
     const nextPlayerIndex = teeTime.players.length + 1;
     const playerField = `Player ${nextPlayerIndex}`;
-    const query = `Course=${encodeURIComponent(teeTime.course)}&Date%20=${encodeURIComponent(teeTime.date)}&Time=${encodeURIComponent(teeTime.time)}`;
+    const query = `Course=${encodeURIComponent(teeTime.course.trim())}&Date=${encodeURIComponent(teeTime.date.trim())}&Time=${encodeURIComponent(teeTime.time.trim())}`;
 
     try {
       const res = await fetch(`https://sheetdb.io/api/v1/4qv4g5mlcy4t5/search?${query}`);
