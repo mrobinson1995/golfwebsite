@@ -15,13 +15,11 @@ export default function GolfSite() {
       const data = await res.json();
       const formattedData = data.map((item, index) => {
         let parsedDate = item['Date ']?.trim();
-        let formattedDate = parsedDate;
-        try {
+        let formattedDate = 'Invalid Date';
+        if (parsedDate && !isNaN(Date.parse(parsedDate))) {
           formattedDate = new Date(parsedDate).toLocaleDateString(undefined, {
             weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
           });
-        } catch {
-          formattedDate = 'Invalid Date';
         }
         return {
           id: index + 1,
@@ -97,8 +95,8 @@ export default function GolfSite() {
     if (!teeTime) return null;
 
     return (
-      <div style={{ marginTop: '40px' }}>
-        <button onClick={() => setTab('teeTimes')} style={{ marginBottom: '20px' }}>← Back</button>
+      <div style={{ marginTop: '40px', fontFamily: 'Arial, sans-serif', color: '#333' }}>
+        <button onClick={() => setTab('teeTimes')} style={{ marginBottom: '20px', padding: '10px 20px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '6px' }}>← Back</button>
         <h2>{teeTime.course}</h2>
         <p><strong>Date:</strong> {teeTime.formattedDate}</p>
         <p><strong>Time:</strong> {teeTime.time}</p>
@@ -107,8 +105,9 @@ export default function GolfSite() {
           placeholder="Enter your name"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
+          style={{ padding: '10px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
         />
-        <button onClick={() => handleSignUp(id)}>Playing</button>
+        <button onClick={() => handleSignUp(id)} style={{ padding: '10px 20px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '6px' }}>Playing</button>
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <div>
@@ -131,11 +130,11 @@ export default function GolfSite() {
     if (tab === 'teeTimes') {
       return (
         <div>
-          <h1>Tee Times</h1>
+          <h1 style={{ fontFamily: 'Georgia, serif', color: '#2c3e50' }}>Tee Times</h1>
           {loading ? <p>Loading tee times...</p> : (
             teeTimes.length > 0 ? (
               teeTimes.map(({ id, formattedDate, time, course, players }) => (
-                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', cursor: 'pointer' }}>
+                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#f9f9f9', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
                   <strong>{formattedDate}</strong>
                   <p>{time} — {course}</p>
                   <p>{players.length} / 4 Players</p>
@@ -194,11 +193,11 @@ export default function GolfSite() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#eef2f5', minHeight: '100vh' }}>
       <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <button onClick={() => setTab('teeTimes')}>Tee Times</button>
-        <button onClick={() => setTab('historical')}>Historical Results</button>
-        <button onClick={() => setTab('rules')}>Rules</button>
+        <button onClick={() => setTab('teeTimes')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'teeTimes' ? '#3e513d' : 'white', color: tab === 'teeTimes' ? 'white' : '#3e513d' }}>Tee Times</button>
+        <button onClick={() => setTab('historical')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'historical' ? '#3e513d' : 'white', color: tab === 'historical' ? 'white' : '#3e513d' }}>Historical Results</button>
+        <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Rules</button>
       </nav>
       {renderTabs()}
     </div>
