@@ -65,7 +65,6 @@ if (!isNaN(dateObj.getTime())) {
       return;
     }
 
-    // Store participation on a remote server (optional Firebase, etc.) or simply local mutation
     const updatedTeeTimes = teeTimes.map(t => {
       if (t.id !== id) return t;
       return { ...t, players: [...t.players, playerName] };
