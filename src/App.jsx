@@ -8,40 +8,42 @@ export default function GolfSite() {
   const [error, setError] = useState('');
   const [tab, setTab] = useState('entrance');
   const [scorecardImages, setScorecardImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const fetchTeeTimes = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
-      const data = await res.json();
-      const formattedData = data.map((item, index) => {
-        let parsedDate = item['Date']?.trim();
-        let formattedDate = parsedDate || 'Invalid Date';
-        if (parsedDate) {
-          const dateObj = new Date(parsedDate + 'T00:00:00');
-          if (!isNaN(dateObj.getTime())) {
-            formattedDate = dateObj.toLocaleDateString(undefined, {
-              weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
-            });
+  useEffect(() => {
+    const fetchTeeTimes = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('https://sheetdb.io/api/v1/4qv4g5mlcy4t5');
+        const data = await res.json();
+        const formattedData = data.map((item, index) => {
+          let parsedDate = item['Date']?.trim();
+          let formattedDate = parsedDate || 'Invalid Date';
+          if (parsedDate) {
+            const dateObj = new Date(parsedDate + 'T00:00:00');
+            if (!isNaN(dateObj.getTime())) {
+              formattedDate = dateObj.toLocaleDateString(undefined, {
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+              });
+            }
           }
-        }
-        return {
-          id: index + 1,
-          rowId: item.id,
-          date: parsedDate || '',
-          formattedDate,
-          time: item.Time,
-          course: item.Course,
-          players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
-        };
-      });
-      setTeeTimes(formattedData);
-    } catch (error) {
-      console.error('Failed to fetch tee times:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+          return {
+            id: index + 1,
+            rowId: item.id,
+            date: parsedDate || '',
+            formattedDate,
+            time: item.Time,
+            course: item.Course,
+            players: [item['Player 1'], item['Player 2'], item['Player 3'], item['Player 4']].filter(Boolean),
+          };
+        });
+        setTeeTimes(formattedData);
+      } catch (error) {
+        console.error('Failed to fetch tee times:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchTeeTimes();
   }, []);
@@ -85,7 +87,7 @@ export default function GolfSite() {
     setTeeTimes(updatedTeeTimes);
   };
 
-  const handleRemove = async (id, nameToRemove) => {
+  const renderTeeTimeDetail = (id) => {
     const teeTime = teeTimes.find(t => t.id === id);
     if (!teeTime) return null;
 
