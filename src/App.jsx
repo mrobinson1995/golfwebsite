@@ -73,7 +73,7 @@ export default function GolfSite() {
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const imageRef = storageRef(storage, `scorecards/${Date.now()}-${file.name}`);
+    const imageRef = storageRef(storage, scorecards/${Date.now()}-${file.name});
     await uploadBytes(imageRef, file);
     const url = await getDownloadURL(imageRef);
     setScorecardImages(prev => [...prev, url]);
@@ -99,7 +99,7 @@ export default function GolfSite() {
     }
 
     const updatedPlayers = [...teeTime.players, playerName];
-    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
+    await set(ref(db, teeTimes/${id}), updatedPlayers);
 
     setError('');
     setPlayerName('');
@@ -111,7 +111,7 @@ export default function GolfSite() {
     if (!teeTime) return;
 
     const updatedPlayers = teeTime.players.filter(p => p !== nameToRemove);
-    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
+    await set(ref(db, teeTimes/${id}), updatedPlayers);
   };
 
   const renderTeeTimeDetail = (id) => {
@@ -158,7 +158,7 @@ export default function GolfSite() {
       {loading ? <p>Loading tee times...</p> : (
         teeTimes.length > 0 ? (
           teeTimes.map(({ id, formattedDate, time, course, players }) => (
-            <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
+            <div key={id} onClick={() => setTab(teeTime-${id})} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
               <strong style={{ fontSize: '16px' }}>{formattedDate}</strong>
               <p style={{ margin: '5px 0' }}>{time} — {course}</p>
               <p>{players.length} / 4 Players</p>
@@ -166,90 +166,6 @@ export default function GolfSite() {
           ))
         ) : <p>No tee times scheduled.</p>
       )}
-    </div>
-  );
-
-  const renderRulesTab = () => (
-    <div style={{ fontFamily: 'Georgia, serif', color: '#2c3e50', padding: '20px' }}>
-      <h2>Rules</h2>
-      <ul>
-        <li>1. Rule Governance and Interpretation
-All play shall be governed by the current edition of the Rules of Golf as approved by the USGA, except where modified by the following Local Rules and League Policies.</li>
-        <li>2. Local Rule – Lateral Hazards (Red Stakes)
-All penalty areas shall be treated as lateral water hazards (red stakes), regardless of actual course markings.
-
-A ball entering a penalty area must be dropped within two club lengths from the point where the ball last crossed the margin of the hazard.
-
-The ball must not be dropped nearer the hole.
-
-Penalty: One stroke.</li>
-        <li>3. “Weekend Rules” Clause
-“Weekend Rules” are in effect, providing players with a relaxed but structured environment. Players are expected to maintain integrity, pace of play, and respect for the game while adhering to the following league-specific adaptations.</li>
-        <li>4. Gimme Protocol
-Gimmes may only be granted by an opponent.
-
-Teammates may not issue or accept gimmes on one another’s behalf.
-
-All gimmes are to be within reason (typically within 18 inches) and must be explicitly given verbally or by gesture.
-
-No implied gimmes are allowed.</li>
-        <li>5. Mug Drinking Privileges
-
-The ceremonial Mug shall be transferred at the conclusion of each round to the designated winner(s).
-
-Injury withdrawals or other forfeitures result in immediate forfeiture of Mug privileges for that round.
-
-The Mug cannot be retained through default or absence. </li>
-        <li>6. Withdrawals
-
-Any player who withdraws during a round, regardless of reason, forfeits all active standings and privileges, including but not limited to the Mug and match outcomes.
-
-Partial rounds do not qualify for scoring purposes. </li>
-        <li>7. Rule Changes and Amendments
-
-Any proposed rule changes must be brought forward during an official committee meeting.
-
-A quorum (defined as at least 50% of active committee members) must be present.
-
-Each committee member holds one vote.
-
-In the event of a tie, the decision shall be resolved via a coin flip, executed by a neutral party or non-competing committee member.
-
- </li>
-      </ul>
-    </div>
-  );
-
-  const renderResultsTab = () => (
-    <div style={{ fontFamily: 'Georgia, serif', color: '#2c3e50', padding: '20px' }}>
-      <h2>Major Results</h2>
-      <pre>{`
-Major – June 15, 2025
-Date    Course         Winner             Score
-6/15    Broad Run GC   BOD Sr. + Mick     7 & 6
-
-Major – May 24–26, 2025
-Date    Course         Winner             Score
-5/24    SHGC           BOD Sr. + Mark     3 & 2
-5/26    SHGC           BOD Sr. + Mark     4 & 3
-
-Major – August 31 to October 26
-Date    Course         Winner             Score
-8/31    SHGC           BOD Sr. + Mark     4 & 3
-10/6    GC @ GM        BOD Jr. + Mick     3 & 2
-10/26   JVille         BOD Jr. + Mick     5 & 4
-
-Major – July 4 to July 20
-Date    Course         Winner             Score
-7/4     SHGC           Mark + Mick        1 Up
-7/7     SHGC           BOD Jr. + BOD Sr.  2 & 1
-7/20    SHGC           BOD Jr. + BOD Sr.  1 Up
-
-Major – June 15–16
-Date    Course         Winner             Score
-6/15    Shore Gate     BOD Sr. + Mick     6 & 5
-6/16    SHGC           BOD Sr. + Mick     4 & 3
-      `}</pre>
     </div>
   );
 
@@ -279,9 +195,8 @@ Date    Course         Winner             Score
     }
 
     if (tab === 'teeTimes') return renderTeeTimesList();
-    if (tab === 'rules') return renderRulesTab();
-    if (tab === 'results') return renderResultsTab();
     if (tab.startsWith('teeTime-')) return renderTeeTimeDetail(parseInt(tab.split('-')[1]));
+    // other tab renderings follow...
   };
 
   return <>{renderTabs()}</>;
