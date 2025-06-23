@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ref, get, set, onValue } from "firebase/database";
 import { db } from "./firebase";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
-
-const storage = getStorage();
 
 export default function GolfSite() {
   const [teeTimes, setTeeTimes] = useState([]);
@@ -58,26 +55,9 @@ export default function GolfSite() {
     }
   };
 
-  const fetchImages = async () => {
-    const listRef = storageRef(storage, 'scorecards');
-    const res = await listAll(listRef);
-    const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
-    setScorecardImages(urls);
-  };
-
   useEffect(() => {
     fetchTeeTimes();
-    fetchImages();
   }, []);
-
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const imageRef = storageRef(storage, scorecards/${Date.now()}-${file.name});
-    await uploadBytes(imageRef, file);
-    const url = await getDownloadURL(imageRef);
-    setScorecardImages(prev => [...prev, url]);
-  };
 
   const handleSignUp = async (id) => {
     if (!playerName.trim()) {
@@ -99,7 +79,7 @@ export default function GolfSite() {
     }
 
     const updatedPlayers = [...teeTime.players, playerName];
-    await set(ref(db, teeTimes/${id}), updatedPlayers);
+    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
 
     setError('');
     setPlayerName('');
@@ -111,7 +91,7 @@ export default function GolfSite() {
     if (!teeTime) return;
 
     const updatedPlayers = teeTime.players.filter(p => p !== nameToRemove);
-    await set(ref(db, teeTimes/${id}), updatedPlayers);
+    await set(ref(db, `teeTimes/${id}`), updatedPlayers);
   };
 
   const renderTeeTimeDetail = (id) => {
@@ -152,52 +132,78 @@ export default function GolfSite() {
     );
   };
 
-  const renderTeeTimesList = () => (
-    <div>
-      <h1 style={{ fontFamily: 'Georgia, serif', color: '#2c3e50' }}>Tee Times</h1>
-      {loading ? <p>Loading tee times...</p> : (
-        teeTimes.length > 0 ? (
-          teeTimes.map(({ id, formattedDate, time, course, players }) => (
-            <div key={id} onClick={() => setTab(teeTime-${id})} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
-              <strong style={{ fontSize: '16px' }}>{formattedDate}</strong>
-              <p style={{ margin: '5px 0' }}>{time} — {course}</p>
-              <p>{players.length} / 4 Players</p>
-            </div>
-          ))
-        ) : <p>No tee times scheduled.</p>
-      )}
-    </div>
-  );
-
   const renderTabs = () => {
-    if (tab === 'entrance') {
+    if (tab === 'teeTimes') {
       return (
-        <div style={{
-          backgroundImage: 'url(https://golfdigest.sports.sndimg.com/content/dam/images/golfdigest/fullset/2017/10/07/59d9000722bd233920d352c5_Jeffersonville%203.JPG.rend.hgtvcom.966.644.suffix/1573348146565.jpeg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: 'DM Serif Display, serif',
-          color: 'white',
-          textShadow: '2px 2px 6px rgba(0,0,0,0.8)',
-          padding: '0 20px',
-          textAlign: 'center'
-        }}>
-          <div style={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: '40px', borderRadius: '12px' }}>
-            <h1 style={{ fontSize: 'clamp(28px, 6vw, 48px)', marginBottom: '20px' }}><em>"So it is said, let it be written"</em></h1>
-            <button onClick={() => setTab('teeTimes')} style={{ padding: '14px 28px', fontSize: '18px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Enter Clubhouse</button>
-          </div>
+        <div>
+          <h1 style={{ fontFamily: 'Georgia, serif', color: '#2c3e50' }}>Tee Times</h1>
+          {loading ? <p>Loading tee times...</p> : (
+            teeTimes.length > 0 ? (
+              teeTimes.map(({ id, formattedDate, time, course, players }) => (
+                <div key={id} onClick={() => setTab(`teeTime-${id}`)} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#ffffff', transition: '0.3s', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: '#000' }}>
+                  <strong style={{ fontSize: '16px' }}>{formattedDate}</strong>
+                  <p style={{ margin: '5px 0' }}>{time} — {course}</p>
+                  <p>{players.length} / 4 Players</p>
+                </div>
+              ))
+            ) : <p>No tee times scheduled.</p>
+          )}
         </div>
       );
     }
-
-    if (tab === 'teeTimes') return renderTeeTimesList();
-    if (tab.startsWith('teeTime-')) return renderTeeTimeDetail(parseInt(tab.split('-')[1]));
-    // other tab renderings follow...
+    if (tab.startsWith('teeTime-')) {
+      const id = parseInt(tab.split('-')[1]);
+      return renderTeeTimeDetail(id);
+    }
+    if (tab === 'historical') {
+      return (
+        <div style={{ color: '#2c3e50' }}>
+          <h2>Historical Results</h2>
+          <p>Coming soon... 🏌️‍♂️</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setScorecardImages([...scorecardImages, ...Array.from(e.target.files)])}
+            style={{ marginTop: '10px' }}
+          />
+        </div>
+      );
+    }
+    return null;
   };
 
-  return <>{renderTabs()}</>;
+  if (tab === 'entrance') {
+    return (
+      <div style={{
+        backgroundImage: 'url(https://golfdigest.sports.sndimg.com/content/dam/images/golfdigest/fullset/2017/10/07/59d9000722bd233920d352c5_Jeffersonville%203.JPG.rend.hgtvcom.966.644.suffix/1573348146565.jpeg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'DM Serif Display, serif',
+        color: 'white',
+        textShadow: '2px 2px 6px rgba(0,0,0,0.8)',
+        padding: '0 20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: '40px', borderRadius: '12px' }}>
+          <h1 style={{ fontSize: 'clamp(28px, 6vw, 48px)', marginBottom: '20px' }}><em>"So it is said, let it be written"</em></h1>
+          <button onClick={() => setTab('teeTimes')} style={{ padding: '14px 28px', fontSize: '18px', backgroundColor: '#3e513d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Enter Clubhouse</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#eef2f5', minHeight: '100vh' }}>
+      <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <button onClick={() => setTab('teeTimes')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'teeTimes' ? '#3e513d' : 'white', color: tab === 'teeTimes' ? 'white' : '#3e513d' }}>Tee Times</button>
+        <button onClick={() => setTab('historical')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'historical' ? '#3e513d' : 'white', color: tab === 'historical' ? 'white' : '#3e513d' }}>Historical Results</button>
+        <button onClick={() => setTab('rules')} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #3e513d', backgroundColor: tab === 'rules' ? '#3e513d' : 'white', color: tab === 'rules' ? 'white' : '#3e513d' }}>Official Rules</button>
+      </nav>
+      {renderTabs()}
+    </div>
+  );
 }
