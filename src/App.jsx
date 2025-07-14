@@ -172,7 +172,7 @@ export default function GolfSite() {
               </thead>
               <tbody>
                 {[
-                  ["7/12/2025", "Broad Run Golfers Club", "Mick + BOD Sr.", "1 UP", "Mark + BOD Jr."],
+                  ["7/12/2025", "Stone Harbor Golf Club", "Mick + BOD Sr.", "1 UP", "Mark + BOD Jr."],
                   ["7/10/2025", "Stone Harbor Golf Club", "Mick + BOD Sr.", "4 & 3", "Mark + BOD Jr."],
                   ["7/5/2025", "Stone Harbor Golf Club", "Mick + BOD Sr.", "Under Review", "Mark + BOD Jr."],
                   ["6/15/2025", "Broad Run Golfers Club", "Mick + BOD Sr.", "7 & 6", "Mark + BOD Jr."],
